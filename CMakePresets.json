@@ -1,0 +1,225 @@
+{
+  "version": 10,
+  "cmakeMinimumRequired": {
+    "major": 4,
+    "minor": 1,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/out/${presetName}/build",
+      "installDir": "${sourceDir}/out/${presetName}/install",
+      "hidden": true,
+      "cacheVariables": {
+        // C++ language
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "ON",
+        // C language
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_C_STANDARD_REQUIRED": "ON",
+        // Export compile commands for IDEs
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        // OpenCV build options
+        "BUILD_TESTS": "OFF",
+        "BUILD_PERF_TESTS": "OFF",
+        "BUILD_EXAMPLES": "OFF",
+        "OPENCV_TEST_DNN_TFLITE": "OFF",
+        "BUILD_ANDROID_EXAMPLES": "OFF"
+      }
+    },
+    {
+      "name": "GCC-MacOS",
+      "displayName": "GCC",
+      "inherits": "default",
+      "environment": {
+        "C": "/opt/homebrew/bin/aarch64-apple-darwin24-gcc-15",
+        "CXX": "/opt/homebrew/bin/aarch64-apple-darwin24-g++-15",
+        "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk"
+      },
+      "cacheVariables": {
+        "CMAKE_OSX_SYSROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "Brew-Clang-MacOS",
+      "displayName": "Brew-Clang",
+      "inherits": "default",
+      "environment": {
+        "C": "/opt/homebrew/opt/llvm/bin/clang",
+        "CXX": "/opt/homebrew/opt/llvm/bin/clang++",
+        "SDKROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk",
+        "LDFLAGS": "-L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib/unwind -lunwind $penv{LDFLAGS}",
+        "CPPFLAGS": "-I/opt/homebrew/opt/llvm/include $penv{CPPFLAGS}"
+      },
+      "cacheVariables": {
+        "CMAKE_OSX_SYSROOT": "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "AppleClang",
+      "displayName": "AppleClang",
+      "inherits": "default",
+      "environment": {
+        "C": "/usr/clang",
+        "CXX": "/usr/bin/clang++"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      }
+    },
+    {
+      "name": "android",
+      "inherits": "default",
+      "toolchainFile": "$env{ANDROID_NDK_PATH}/build/cmake/android-legacy.toolchain.cmake",
+      "cacheVariables": {
+        "ANDROID_SDK_PATH": "$env{ANDROID_SDK_PATH}",
+        "ANDROID_SDK_ROOT": "$env{ANDROID_SDK_PATH}",
+        "ANDROID_ABI": "arm64-v8a",
+        "ANDROID_STL": "c++_static",
+        "ANDROID_PLATFORM": "34",
+        "BUILD_TOOLS": "36.0.0",
+        "CMAKE_ANDROID_NDK": "$env{ANDROID_NDK_PATH}",
+        "CMAKE_SYSTEM_NAME": "Android"
+      }
+    },
+    {
+      "name": "msvc",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "out/windows/msvc/build",
+      "installDir": "out/windows/msvc/install",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "ON",
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_C_STANDARD_REQUIRED": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "cl",
+        "CMAKE_CXX_COMPILER": "cl",
+        "CMAKE_PREFIX_PATH": "C:/Local/Qt/6.9.2/msvc2022_64/lib/cmake/Qt6;$penv{CMAKE_PREFIX_PATH}"
+      }
+    },
+    {
+      "name": "clang-cl",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "out/windows/clang/build",
+      "installDir": "out/windows/clang/install",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_CXX_EXTENSIONS": "ON",
+        "CMAKE_C_STANDARD": "17",
+        "CMAKE_C_STANDARD_REQUIRED": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_C_COMPILER": "C:/Local/Qt/Tools/llvm-mingw1706_64/bin/x86_64-w64-mingw32-clang.exe",
+        "CMAKE_CXX_COMPILER": "C:/Local/Qt/Tools/llvm-mingw1706_64/bin/x86_64-w64-mingw32-clang++.exe",
+        "CMAKE_PREFIX_PATH": "C:/Local/Qt/6.9.2/llvm-mingw_64/lib/cmake/Qt6;$penv{CMAKE_PREFIX_PATH}"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "Debug-GCC-MacOS",
+      "displayName": "Debug",
+      "configurePreset": "GCC-MacOS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-GCC-MacOS",
+      "displayName": "Release with debug information",
+      "configurePreset": "GCC-MacOS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Debug-Brew-Clang-MacOS",
+      "displayName": "Debug",
+      "configurePreset": "Brew-Clang-MacOS",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-Brew-Clang-MacOS",
+      "displayName": "Release with debug information",
+      "configurePreset": "Brew-Clang-MacOS",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Debug-AppleClang-MacOS",
+      "displayName": "Debug",
+      "configurePreset": "AppleClang",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-AppleClang-MacOS",
+      "displayName": "Release with debug information",
+      "configurePreset": "AppleClang",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Debug-Android",
+      "displayName": "Debug",
+      "configurePreset": "android",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-Android",
+      "displayName": "Release with debug information",
+      "configurePreset": "android",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Release-Android",
+      "displayName": "Release",
+      "configurePreset": "android",
+      "configuration": "Release"
+    },
+    {
+      "name": "Debug-MSVC-Windows",
+      "displayName": "Debug",
+      "configurePreset": "msvc",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-MSVC-Windows",
+      "displayName": "Release with debug information",
+      "configurePreset": "msvc",
+      "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "Debug-CLANG-Windows",
+      "displayName": "Debug",
+      "configurePreset": "clang-cl",
+      "configuration": "Debug"
+    },
+    {
+      "name": "RDI-CLANG-Windows",
+      "displayName": "Release with debug information",
+      "configurePreset": "clang-cl",
+      "configuration": "RelWithDebInfo"
+    }
+  ]
+}
